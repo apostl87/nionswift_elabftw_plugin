@@ -61,12 +61,22 @@ class Users():
             print(ex.strerror)
 
     def login(self, user, password):
-        cipher, nonce, salt = self.get_cipher(user)
+        try: # pnm-specific
+            cipher, nonce, salt, elabftw_user_id = self.get_cipher(user)
+        except:
+            try: cipher, nonce, salt = self.get_cipher(user)
+            except:
+                print('version mismatch')
+                return None
         # Generate key from password
         key,salt = self.key_from_password(password, bytes.fromhex(salt))
 
         try:
             self.api_key = AESGCM(key).decrypt(bytes.fromhex(nonce),bytes.fromhex(cipher), None).decode('utf-8') # convert from hex string back to bytes
+            try: # pnm-specific
+                self.elabftw_user_id = elabftw_user_id
+            except:
+                self.elabftw_user_id = None
         except InvalidTag as ex:
             self.logged_in = False
             return False
