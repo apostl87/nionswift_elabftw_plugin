@@ -9,6 +9,7 @@ import typing
 import time
 from datetime import datetime
 from urllib.parse import urlparse
+from PyQt5 import QtCore, QtWidgets
 
 import elabapy
 from nion.swift import DocumentController, Facade, Panel, Workspace
@@ -394,8 +395,14 @@ class ElabFTWUIHandler:
             exp['body'] += f"</p>"
             self.elab_manager.post_experiment(self.current_experiment_id, exp)
             print(f'eLabFTW plug-in: Text has been appended to Experiment body.')
-
         self.asyncthread = AsyncRequestThread_threading.asyncrequest(task_update_experiment_body)
+
+    def append_line2body_return_pressed(self, widget: Declarative.UIWidget):
+        modifiers = QtWidgets.QApplication.keyboardModifiers()
+        if modifiers == QtCore.Qt.ShiftModifier: pass
+        #elif modifiers == QtCore.Qt.ControlModifier: pass
+        #elif modifiers == QtCore.Qt.AltModifier: pass
+        else: self.append_line2body_button_clicked(widget)
 
     def on_set_status_combo_changed(self, widget: Declarative.UIWidget, current_index: int):
         if current_index >= 1 and current_index <= 4:
@@ -604,8 +611,12 @@ class ElabFTWUI:
         add_multiple_links_button = ui.create_push_button(name='add_multiple_links_button', text='Dialog: Add multiple links', on_clicked='add_multiple_links_button_clicked')
         add_links_column = ui.create_column(add_link_row, add_multiple_links_button, ui.create_stretch())
 
-        append_line2body_text_edit = ui.create_text_edit(name='append_line2body_text_edit', text='@binding(append_line2body_text)',
-                                                         placeholder_text='...', clear_button_enabled=True) #, on_text_edited='append_line2body_text_edit_edited')
+        append_line2body_text_edit = ui.create_text_edit(
+            name='append_line2body_text_edit',
+            text='@binding(append_line2body_text)',
+            placeholder_text='...', 
+            clear_button_enabled=True,
+            on_return_pressed='append_line2body_return_pressed')
         append_line2body_button = ui.create_push_button(name='append_line2body_button', text='Append text', on_clicked='append_line2body_button_clicked', )
         append_line2body_column = ui.create_column(append_line2body_text_edit, append_line2body_button)
 
