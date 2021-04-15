@@ -66,6 +66,7 @@ class ElabFTWUIHandler:
         self.__create_experiment_text = None
         self.__current_experiment_id = None
         self.__current_experiment_title = None
+        self.__append_line2body_timestamp_boolean = True
         self.set_status = None
 
     def init_handler(self):
@@ -390,7 +391,9 @@ class ElabFTWUIHandler:
             self.append_line2body_text = ""
             #
             exp = self.elab_manager.get_experiment(self.current_experiment_id)
-            exp['body'] += f"<p><b>[{datetime.now().strftime('%H:%M:%S')}]</b>  "
+            exp]'body'] += f"<p>"
+            if self.append_line2body_timestamp_boolean == True:
+                exp['body'] += f"<b>[{datetime.now().strftime('%H:%M:%S')}]</b>  "
             exp['body'] += tmp
             exp['body'] += f"</p>"
             self.elab_manager.post_experiment(self.current_experiment_id, exp)
@@ -430,13 +433,14 @@ class ElabFTWUIHandler:
         #
 
     def finalize_button_clicked(self, widget: Declarative.UIWidget):
+        # Not yet available in eLabFTW API
         pass
 
     def project_path_lines(self):
         out_str = "<p>"
         out_str += "<b>Path to Nion Swift Project</b>"
         out_str += "<br>"
-        try: out_str += self.__api.application.document_controllers[0]._document_controller.project.storage_system_path.parent.as_uri()
+        try: out_str += self.__api.application.document_controllers[0]._document_controller.project.storage_system_path.parent.as_url()
         except: out_str += "Your version of Nion Swift is not compatible with this plug-in feature."
         out_str += "</p>"
         out_str += "<hr>"
@@ -515,6 +519,16 @@ class ElabFTWUIHandler:
     def append_line2body_text(self, value):
         self.__append_line2body_text = value
         self.property_changed_event.fire("append_line2body_text")
+
+    @property
+    def append_line2body_timestamp_boolean(self):
+        return self.__append_line2body_timestamp_boolean
+
+    @append_line2body_timestamp_boolean.setter
+    def append_line2body_timestamp_boolean(self, value):
+        if value in [True, False]:
+            self.__append_line2body_timestamp_boolean = value
+        self.property_changed_event.fire("append_line2body_timestamp_boolean")
 
     @property
     def create_experiment_text(self):
@@ -617,8 +631,10 @@ class ElabFTWUI:
             placeholder_text='...', 
             clear_button_enabled=True,
             on_return_pressed='append_line2body_return_pressed')
-        append_line2body_button = ui.create_push_button(name='append_line2body_button', text='Append text', on_clicked='append_line2body_button_clicked', )
-        append_line2body_column = ui.create_column(append_line2body_text_edit, append_line2body_button)
+        append_line2body_button = ui.create_push_button(name='append_line2body_button', text='Append text', on_clicked='append_line2body_button_clicked')
+        append_line2body_timestamp_checkbox = ui.create_check_box(name='append_line2body_timestamp_checkbox', text='Prepend timestamp', checked='@binding(append_line2body_timestamp_boolean)')
+        append_line2body_button_row = ui.create_row(append_line2body_button, append_line2body_timestamp_checkbox)
+        append_line2body_column = ui.create_column(append_line2body_text_edit, append_line2body_button_row, ui.create_stretch())
 
         status_list = ['(Choose)', 'Running', 'Success', 'Need to be redone', 'Fail']
         set_status_combo = ui.create_combo_box(name='status_combo', items=status_list, on_current_index_changed='on_set_status_combo_changed')
