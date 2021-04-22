@@ -344,6 +344,9 @@ class ElabFTWUIHandler:
         if self.undo_metadata != None:
             self.last_modified_dataitem.metadata = self.undo_metadata
 
+    def add_tag_return_pressed(self, widget: Declarative.UIWidget):
+        self.add_tag_button_clicked(widget)
+
     def add_tag_button_clicked(self, widget: Declarative.UIWidget):
         def task_add_tag():
             params = {'tag': self.add_tag_text}
@@ -354,6 +357,9 @@ class ElabFTWUIHandler:
             print(f'eLabFTW plug-in: Tag {params["tag"]} has been added.')
         
         self.asyncthread = AsyncRequestThread_threading.asyncrequest(task_add_tag)
+
+    def add_link_return_pressed(self, widget: Declarative.UIWidget):
+        self.add_link_button_clicked(widget)
             
     def add_link_button_clicked(self, widget: Declarative.UIWidget):
         def task_add_link():
@@ -391,7 +397,7 @@ class ElabFTWUIHandler:
             self.append_line2body_text = ""
             #
             exp = self.elab_manager.get_experiment(self.current_experiment_id)
-            exp]'body'] += f"<p>"
+            exp['body'] += f"<p>"
             if self.append_line2body_timestamp_boolean == True:
                 exp['body'] += f"<b>[{datetime.now().strftime('%H:%M:%S')}]</b>  "
             exp['body'] += tmp
@@ -615,11 +621,11 @@ class ElabFTWUI:
         logout_user_row = ui.create_row(logout_user_button, ui.create_stretch(), spacing=8, margin=4)
         
         # pnm functionality
-        add_tag_line_edit = ui.create_line_edit(name='add_tag_line_edit', text='@binding(add_tag_text)', placeholder_text=' Tag ')
+        add_tag_line_edit = ui.create_line_edit(name='add_tag_line_edit', text='@binding(add_tag_text)', placeholder_text=' Tag ', on_return_pressed='add_tag_return_pressed')
         add_tag_button = ui.create_push_button(name='add_tag_button', text='Add Tag', on_clicked='add_tag_button_clicked')
         add_tag_row = ui.create_row(add_tag_line_edit, add_tag_button)
         
-        add_link_line_edit = ui.create_line_edit(name='add_link_line_edit', text='@binding(add_link_text)', placeholder_text=' ELN item id ')
+        add_link_line_edit = ui.create_line_edit(name='add_link_line_edit', text='@binding(add_link_text)', placeholder_text=' ELN item id ', on_return_pressed='add_link_return_pressed')
         add_link_button = ui.create_push_button(name='add_link_button', text='Add to linked items', on_clicked='add_link_button_clicked')
         add_link_row = ui.create_row(add_link_line_edit, add_link_button)
         add_multiple_links_button = ui.create_push_button(name='add_multiple_links_button', text='Dialog: Add multiple links', on_clicked='add_multiple_links_button_clicked')
