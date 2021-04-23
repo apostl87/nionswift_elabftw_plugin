@@ -55,14 +55,15 @@ class LinksDialogUI:
     def get_ui_handler(self, api_broker: PlugInManager.APIBroker=None, document_controller=None, event_loop: asyncio.AbstractEventLoop=None, elab_manager: elabapy.Manager=None, experiment_id: int=None, **kwargs):
         api = api_broker.get_api('~1.0')
         ui = api_broker.get_ui('~1.0')
-
         self.all_items = None
 
+        # The dialog needs to be called on UIThread, but fetching all items should be threaded out
         def tasks_sequential_calling_uithread():
             self.__fetch_all_items(elab_manager)
             def task_create_gui():
                 ui_view = self.__create_ui_view(ui, title=kwargs.get('title'))
                 return LinksDialogUIHandler(api, ui_view, document_controller=document_controller, elab_manager=elab_manager, experiment_id=experiment_id)
+            # task_create_gui can be called outside of UI thread
             task_create_gui() # api.queue_task(task_create_gui)
         self.asyncthread = AsyncRequestThread_threading.asyncrequest(tasks_sequential_calling_uithread)
 
@@ -99,17 +100,16 @@ class LinksDialogUI:
         self.all_items = elab_manager.get_all_items() # API yields 16 items
         print(f'{len(self.all_items)} items fetched from eLabFTW API.') # temporary feedback line
 
-        ## TMP workaround for the line above
-#        self.all_items = []
-#        for item_id in range(50):
-#            try:
-#                output = elab_manager.get_item(item_id)
-#            except:
-#                pass
-#            print(item_id) # tmp
-#            if type(output) == dict:
-#                self.all_items.append(output)
-        ## TMP end
+        ## TEMP workaround for the line above
+        #self.all_items = []
+        #for item_id in range(50):
+        #    try: output = elab_manager.get_item(item_id)
+        #    except: pass
+        #
+        #    print(item_id) # tmp
+        #    if type(output) == dict:
+        #        self.all_items.append(output)
+        ## TEMP end
 
 
         
