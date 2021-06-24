@@ -17,7 +17,7 @@ setup(
     #download_url = 'https://github.com/shabihsherjeel/nionswift_elabftw_plugin/archive/v0.1.2.4-alpha.tar.gz',
     keywords = ['NIONSWIFT', 'ELABFTW', 'ELN', 'PLUGIN'],
     packages=['nionswift_plugin.nionswift_elabftw_plugin'],#, 'elabapy'],
-    install_requires=['cryptography', 'nionutils', 'nionui', 'nionswift'],#, 'elabapy'],
+    install_requires=['requests', 'cryptography', 'nionutils', 'nionui', 'nionswift'],#, 'elabapy'],
     classifiers=[
     'Development Status :: 3 - Alpha',
     'Intended Audience :: Science/Research',
