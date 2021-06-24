@@ -9,7 +9,7 @@ import typing
 import time
 from datetime import datetime
 from urllib.parse import urlparse
-from PyQt5 import QtCore, QtWidgets
+#DISABLED# from PyQt5 import QtCore, QtWidgets
 
 import elabapy
 from nion.swift import DocumentController, Facade, Panel, Workspace
@@ -381,11 +381,12 @@ class ElabFTWUIHandler:
         self.asyncthread = AsyncRequestThread_threading.asyncrequest(task_update_experiment_body)
 
     def append_line2body_return_pressed(self, widget: Declarative.UIWidget):
-        modifiers = QtWidgets.QApplication.keyboardModifiers()
-        if modifiers == QtCore.Qt.ShiftModifier: pass
-        #elif modifiers == QtCore.Qt.ControlModifier: pass
-        #elif modifiers == QtCore.Qt.AltModifier: pass
-        else: self.append_line2body_button_clicked(widget)
+        #DISABLED# modifiers = QtWidgets.QApplication.keyboardModifiers()
+        #DISABLED# if modifiers == QtCore.Qt.ShiftModifier: pass
+        #DISABLED# #elif modifiers == QtCore.Qt.ControlModifier: pass
+        #DISABLED# #elif modifiers == QtCore.Qt.AltModifier: pass
+        #DISABLED# else: self.append_line2body_button_clicked(widget)
+        self.append_line2body_button_clicked(widget)
 
     def on_set_status_combo_changed(self, widget: Declarative.UIWidget, current_index: int):
         if current_index >= 1 and current_index <= 4:
