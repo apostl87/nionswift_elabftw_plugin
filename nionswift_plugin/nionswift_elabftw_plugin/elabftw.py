@@ -520,7 +520,10 @@ class ElabFTWUIHandler:
                 error('Cannot convert variable "value" to type int') 
         self.__current_experiment_id = value
         self.property_changed_event.fire("current_experiment_id")
-        self.current_experiment_title = self.elab_manager.get_experiment(value)['title']
+        
+        print("self.elab_manager.get_experiment(value)")
+        print(self.elab_manager.get_experiment(value))
+        #DEBUG this self.current_experiment_title = self.elab_manager.get_experiment(value)['title']
 
     @property
     def current_experiment_title(self):
