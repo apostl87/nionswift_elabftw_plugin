@@ -9,7 +9,6 @@ import typing
 import time
 from datetime import datetime
 from urllib.parse import urlparse
-from PyQt5 import QtCore, QtWidgets
 
 import elabapy
 from nion.swift import DocumentController, Facade, Panel, Workspace
@@ -19,7 +18,7 @@ from nion.ui import Declarative
 from nion.utils import Event, Registry
 
 from nionswift_plugin.nionswift_elabftw_plugin.AsyncRequestThread import \
-    AsyncRequestThread_QT, AsyncRequestThread_threading
+    AsyncRequestThread_threading
 #from nionswift_plugin.nionswift_elabftw_plugin.AsyncRequestWrapper import \
 #    AsyncRequestWrapper
 
@@ -131,15 +130,8 @@ class ElabFTWUIHandler:
             self.current_experiment_id = self.experiments[self.combo.current_index]['id']
             self.get_uploads_for_current_experiment()
 
-        # Use QThread or threading
-        # Keep the reference self.asyncthread.
-        # It ensures that the garbage collector cannot intervene.
-        if self.asyncthread_package == 'qt':
-            def tasks_sequential(experiments=None):
-                task_set_experiments(experiments=experiments)
-                task_update_ui()
-            self.asyncthread = AsyncRequestThread_QT.asyncrequest(self.elab_manager.get_all_experiments, tasks_sequential)
-        elif self.asyncthread_package == 'threading':
+        # Keep the reference self.asyncthread. This will ensure that the garbage collector cannot intervene.
+        if self.asyncthread_package == 'threading':
             def tasks_sequential_calling_uithread(experiments=None):
                 task_set_experiments(experiments=experiments)
                 self.__api.queue_task(task_update_ui)
@@ -213,9 +205,7 @@ class ElabFTWUIHandler:
             f = io.StringIO(json.dumps(metadata, indent=3))
             f.name = dataitem.title+'.json'
             files = {'file': f}
-            if self.asyncthread_package == 'qt':
-                self.asyncthread = AsyncRequestThread_QT.asyncrequest(self.elab_manager.upload_to_experiment, None, self.current_experiment_id, files)
-            elif self.asyncthread_package == 'threading':
+            if self.asyncthread_package == 'threading':
                 self.asyncthread = AsyncRequestThread_threading.asyncrequest(self.elab_manager.upload_to_experiment, self.current_experiment_id, files)
             else:
                 print('Debug: Chosen asynchronous threading package not implemented.')
@@ -231,12 +221,7 @@ class ElabFTWUIHandler:
             self.combo.items = [x['title'] for x in self.experiments]
             self.get_uploads_for_current_experiment()
 
-        if self.asyncthread_package == 'qt':
-            def tasks_sequential(experiments=None):
-                task_set_experiments(experiments=experiments)
-                task_reset_ui()
-            self.asyncthread = AsyncRequestThread_QT.asyncrequest(self.elab_manager.get_all_experiments, tasks_sequential)
-        elif self.asyncthread_package == 'threading':
+        if self.asyncthread_package == 'threading':
             def tasks_sequential_calling_uithread(experiments=None):
                 task_set_experiments(experiments=experiments)
                 self.__api.queue_task(task_reset_ui)
@@ -272,12 +257,7 @@ class ElabFTWUIHandler:
                 self.uploads_combo.items = ['No attachments found!']
                 self.current_upload_id = '-1'
 
-        if self.asyncthread_package == 'qt':
-            def tasks_sequential(exp=None):
-                task_lookup_current_experiment(exp=exp)
-                task_ui()
-            self.asyncthread = AsyncRequestThread_QT.asyncrequest(self.elab_manager.get_experiment, tasks_sequential, self.current_experiment_id)
-        elif self.asyncthread_package == 'threading':
+        if self.asyncthread_package == 'threading':
             def tasks_sequential_calling_uithread(exp=None):
                 task_lookup_current_experiment(exp=exp)
                 self.__api.queue_task(task_ui)
@@ -327,12 +307,7 @@ class ElabFTWUIHandler:
             self.ui_handler.request_close = dialog.request_close
             dialog.show()
 
-        if self.asyncthread_package == 'qt':
-            def tasks_sequential(metadata_elab):
-                show_metadata_diff(metadata_elab)
-                task_ui()
-            self.asyncthread = AsyncRequestThread_QT.asyncrequest(self.elab_manager.get_upload, tasks_sequential, self.current_upload_id)
-        elif self.asyncthread_package == 'threading':
+        if self.asyncthread_package == 'threading':
             def tasks_sequential_calling_uithread():
                 show_metadata_diff(self.elab_manager.get_upload(self.current_upload_id))
                 self.__api.queue_task(task_ui)
@@ -459,28 +434,14 @@ class ElabFTWUIHandler:
                 'date': datetime.today().strftime('%Y%m%d'),
                 }
 
-        if self.asyncthread_package == 'qt':
-            exp = self.elab_manager.create_experiment()
-            print(f'eLabFTW plug-in: Experiment "{experiment_name}" created.')
-            self.current_experiment_id = exp['id'] # set the id of the new experiment to upload to
-
-            self.asyncthread = AsyncRequestThread_QT.asyncrequest(self.elab_manager.post_experiment, None, self.current_experiment_id, params)
-            if True: # pnm-specific: add links to (1) Person entry of current user and (2) Nion UltraSTEM 100
-                self.asyncthread = AsyncRequestThread_QT.asyncrequest(self.elab_manager.post_experiment, None, self.current_experiment_id, {'link': 17})
-                print(f'eLabFTW plug-in: Device "Nion UltraSTEM 100" has been linked.')
-                self.asyncthread = AsyncRequestThread_QT.asyncrequest(self.elab_manager.post_experiment, None, self.current_experiment_id, {'link': self.users.elabftw_user_id})
-                print(f'eLabFTW plug-in: Your Person entry has been linked.')
-            if uploadFlag:
-                self.upload_meta_data()
-            self.get_experiments_and_set()
-        elif self.asyncthread_package == 'threading':
+        if self.asyncthread_package == 'threading':
             def task_create_experiment_():
                 exp = self.elab_manager.create_experiment()
                 print(f'eLabFTW plug-in: Experiment "{experiment_name}" created.')
                 self.current_experiment_id = exp['id'] # set the id of the new experiment to upload to
 
                 self.elab_manager.post_experiment(self.current_experiment_id, params)
-                if True: # pnm-specific: add link Nion UltraSTEM 100
+                if True: # pnm-specific: add links to (1) Nion UltraSTEM 100 and (2) Person entry of current user
                     self.elab_manager.post_experiment(self.current_experiment_id, {'link': 17})
                     print(f'eLabFTW plug-in: Device "Nion UltraSTEM 100" has been linked.')
                     self.elab_manager.post_experiment(self.current_experiment_id, {'link': self.users.elabftw_user_id})
