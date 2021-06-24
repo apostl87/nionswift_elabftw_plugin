@@ -3,7 +3,7 @@ def edit_body_line(input_str, elab_manager):
     output_str = input_str
 
     ## Convert line breaks to HTML paragraph tags
-    output_str = output_str.replace('\r\n', '\n').replace('\n', '<br>')
+    output_str = output_str.replace('\r\n', '\n').replace('\n', '<br />')
 
     ## This block replaces '#{int}' by a hyperlink within eLabFTW   
     if output_str.find('#') != -1:

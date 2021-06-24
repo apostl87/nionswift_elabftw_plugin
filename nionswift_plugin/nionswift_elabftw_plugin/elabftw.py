@@ -395,11 +395,11 @@ class ElabFTWUIHandler:
             self.append_line2body_text = ""
             #
             exp = self.elab_manager.get_experiment(self.current_experiment_id)
-            exp['body'] += f""
+            exp['body'] += f"<p>"
             if self.append_line2body_timestamp_boolean == True:
                 exp['body'] += f"[{datetime.now().strftime('%H:%M:%S')}]  "
             exp['body'] += tmp
-            exp['body'] += f""
+            exp['body'] += f"</p>"
             self.elab_manager.post_experiment(self.current_experiment_id, exp)
             print(f'eLabFTW plug-in: Text has been appended to Experiment body.')
         self.asyncthread = AsyncRequestThread_threading.asyncrequest(task_update_experiment_body)
@@ -549,6 +549,12 @@ class ElabFTWUIHandler:
 
     @current_experiment_id.setter
     def current_experiment_id(self, value):
+        if type(value) is not int:
+            try:
+                value = eval(value)
+                assert type(value) == int
+            except:
+                error('Cannot convert variable "value" to type int') 
         self.__current_experiment_id = value
         self.property_changed_event.fire("current_experiment_id")
         self.current_experiment_title = self.elab_manager.get_experiment(value)['title']
