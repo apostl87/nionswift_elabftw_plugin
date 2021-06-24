@@ -9,6 +9,7 @@ import typing
 import time
 from datetime import datetime
 from urllib.parse import urlparse
+from PyQt5 import QtCore, QtWidgets
 
 import elabapy
 from nion.swift import DocumentController, Facade, Panel, Workspace
