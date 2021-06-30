@@ -96,4 +96,5 @@ class Users():
             f.close()
         except:
             self.users.append("<No User>")
+        self.users.reverse()
         return self.users if len(self.users)>0 else ["<No User>"]

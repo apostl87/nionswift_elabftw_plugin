@@ -57,6 +57,7 @@ class ElabFTWUIHandler:
         self.undo_metadata = None
         self.last_modified_dataitem = None
         self.combo = None
+        self.experiments_combo = None
         # master or pnm-specific: use threading instead of qt
         self.asyncthread_package = 'threading' # options: 'qt', 'threading'
         # pnm functionality: properties for readable GUI elements
@@ -123,12 +124,12 @@ class ElabFTWUIHandler:
     def get_experiments_and_set(self):
         def task_set_experiments(experiments=None):
             self.experiments = experiments if experiments is not None else self.elab_manager.get_all_experiments()
-            self.experiments.append({'id':'-1', 'title':''})
+            self.experiments = [dict({'id':'-1', 'title':''})] + self.experiments
 
         def task_update_ui():
             self.ui_stack.current_index = 1
             self.experiments_combo.items = [x['title'] for x in self.experiments]
-            self.current_experiment_id = self.experiments[self.combo.current_index]['id']
+            self.current_experiment_id = self.experiments[1]['id']
             self.get_uploads_for_current_experiment()
 
         # Keep the reference self.asyncthread. This will ensure that the garbage collector cannot intervene.
@@ -166,15 +167,18 @@ class ElabFTWUIHandler:
             self.switch_to_experiments_list()
 
         def accepted_elabftw_user_id_dialog(user_id):
-            try: int(user_id)
-            except: raise Exception('Invalid format for Person id')
+            # DEBUG anchor; bug due to cipher? Invalid readout from users.txt
+            #try:
+            #    int(user_id)
+            #except:
+            #    raise Exception('Invalid format for Person id')
             self.users.elabftw_user_id = user_id
             self.__api.application.document_windows[0].show_get_string_message_box('Create User', 'Enter API key', accepted_api_dialog, accepted_text='Set')
 
         def accepted_pass_dialog(password):
             reject_colon(password)
             if self.users.password == password:
-                self.__api.application.document_windows[0].show_get_string_message_box('Create User', 'Enter eLabFTW item id for your Person', accepted_elabftw_user_id_dialog, accepted_text='Set')
+                self.__api.application.document_windows[0].show_get_string_message_box('Create User', 'Click SET (Disabled: Enter Person entry id from eLabFTW)', accepted_elabftw_user_id_dialog, accepted_text='Set')
             else:
                 self.users.password = password
                 self.__api.application.document_windows[0].show_get_string_message_box('Create User', 'Repeat password', accepted_pass_dialog, accepted_text='Confirm')
@@ -219,7 +223,7 @@ class ElabFTWUIHandler:
             self.experiments = self.elab_manager.get_all_experiments()
             self.experiments.append({'id':'-1', 'title':''})
         def task_reset_ui():
-            self.combo.items = [x['title'] for x in self.experiments]
+            self.experiments_combo.items = [x['title'] for x in self.experiments]
             self.get_uploads_for_current_experiment()
 
         if self.asyncthread_package == 'threading':
@@ -273,9 +277,11 @@ class ElabFTWUIHandler:
             return
 
         if self.current_experiment_id == str(-1):
-            def accepted_exp_dialog(experiment_name):
-                self.create_experiment_(experiment_name, uploadFlag=True)
-            self.__api.application.document_windows[0].show_get_string_message_box('Create Experiment', 'Enter a name for the Experiment', accepted_exp_dialog, accepted_text='Create')
+            #--# deprecated (pnm)
+            #--# def accepted_exp_dialog(experiment_name):
+            #--#     self.create_experiment_(experiment_name, uploadFlag=True)
+            #--# self.__api.application.document_windows[0].show_get_string_message_box('Create Experiment', 'Enter a name for the Experiment', accepted_exp_dialog, accepted_text='Create')
+            pass
         else:
             self.upload_meta_data()
 
@@ -428,7 +434,7 @@ class ElabFTWUIHandler:
         return out_str
 
     def create_experiment_(self, experiment_name, uploadFlag: bool=False):
-        if experiment_name in ["", " "] or "not create a new Experiment" in experiment_name:
+        if experiment_name in ["", " "] or "not create" in experiment_name:
             return # this might need to be adapted und include some user feedback
 
         params = {'title': experiment_name,
@@ -440,16 +446,19 @@ class ElabFTWUIHandler:
             def task_create_experiment_():
                 exp = self.elab_manager.create_experiment()
                 print(f'eLabFTW plug-in: Experiment "{experiment_name}" created.')
-                self.current_experiment_id = exp['id'] # set the id of the new experiment to upload to
+                
+                #--# This has been removed due to bugs in pnm version
+                #--# self.current_experiment_id = exp['id'] # set the id of the new experiment to upload to
 
-                self.elab_manager.post_experiment(self.current_experiment_id, params)
-                if True: # pnm-specific: add links to (1) Nion UltraSTEM 100 and (2) Person entry of current user
-                    self.elab_manager.post_experiment(self.current_experiment_id, {'link': 17})
+                self.elab_manager.post_experiment(exp['id'], params)
+                if True: # pnm-specific: add links to (1) Nion UltraSTEM 100 ((id 17)) and (2) Person entry of current user
+                    self.elab_manager.post_experiment(exp['id'], {'link': 17})
                     print(f'eLabFTW plug-in: Device "Nion UltraSTEM 100" has been linked.')
-                    self.elab_manager.post_experiment(self.current_experiment_id, {'link': self.users.elabftw_user_id})
-                    print(f'eLabFTW plug-in: Your Person entry has been linked.')
-                if uploadFlag:
-                    self.upload_meta_data
+                    # DEBUG anchor; bug due to cipher? Invalid readout from users.txt
+                    #self.elab_manager.post_experiment(exp['id'], {'link': self.users.elabftw_user_id})
+                    #print(f'eLabFTW plug-in: Your Person entry has been linked.')
+                #--# if uploadFlag:
+                #--#    self.upload_meta_data
                 self.get_experiments_and_set()
 
             self.asyncthread = AsyncRequestThread_threading.asyncrequest(task_create_experiment_)
@@ -521,9 +530,8 @@ class ElabFTWUIHandler:
         self.__current_experiment_id = value
         self.property_changed_event.fire("current_experiment_id")
         
-        print("self.elab_manager.get_experiment(value)")
-        print(self.elab_manager.get_experiment(value))
-        #DEBUG this self.current_experiment_title = self.elab_manager.get_experiment(value)['title']
+        self.current_experiment_title = self.elab_manager.get_experiment(value)['title']
+        print(f'eLabFTW plug-in: Selected experiment {value}, "{self.current_experiment_title}"')
 
     @property
     def current_experiment_title(self):
