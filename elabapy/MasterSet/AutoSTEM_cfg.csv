@@ -1,0 +1,41 @@
+ToHdwrSgn,-,,
+FromHdwrSgn,+,,
+CommTimeout,5000
+LongCommTimeout,30000
+PollTime,100,,
+HasPSModule,1,,
+UseLogFile,0
+
+CalibFile,calibrations.csv,,
+
+DSOverrideAlign,1,
+RonchiCentreX,0.5,
+RonchiCentreY,0.5,
+ADFNativeRad,30,
+
+NCKMaxTuneExpTime,1000
+MaxAutoRunTimes,1.00E+01,
+VGMagMin,1.00E+05,,
+VGMagMax,5.00E+05,,
+
+,days,hours,mins
+BackupTime,0,0,5
+
+//New dialog stuff
+//flags: o-open at start s#-include load/save buttons for sgroup #
+//ctrl flags: d - make 2d control (combines with next control in list)
+Dialog,0,Probe Basic,o
+DlgCtrl,0,K10,Defocus,nano,0.1
+DlgCtrl,0,EHTFocus,Fine\Focus,nano,0.01
+DlgCtrl,0,SPACER,s,s,0
+DlgCtrl,0,KSHx,Shift X,nano,0.01,d
+DlgCtrl,0,KSHy,Shift Y,nano,0.01
+DlgCtrl,0,SPACER,s,s,0
+DlgCtrl,0,K12a,Astig A,nano,0.01
+DlgCtrl,0,K12b,Astig B,nano,0.01
+DlgCtrl,0,SPACER,s,s,0
+DlgCtrl,0,K21a,Coma A,nano,1
+DlgCtrl,0,K21b,Coma B,nano,1
+DlgCtrl,0,SPACER,s,s,0
+DlgCtrl,0,K23a,3-fold\Astig A,nano,1
+DlgCtrl,0,K23b,3-fold\Astig B,nano,1
