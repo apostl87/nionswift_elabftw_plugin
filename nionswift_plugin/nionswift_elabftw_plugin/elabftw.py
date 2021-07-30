@@ -425,12 +425,12 @@ class ElabFTWUIHandler:
 
     def project_path_lines(self):
         out_str = ""
-        out_str += "Path to Nion Swift Project"
-        out_str += ""
-        try: out_str += self.__api.application.document_controllers[0]._document_controller.project.storage_system_path.parent.as_url()
+        out_str += "<b>Path to Nion Swift Project</b>"
+        out_str += "<br />"
+        try: out_str += str(self.__api.application.document_controllers[0]._document_controller.project.storage_system_path.parent)
         except: out_str += "Your version of Nion Swift is not compatible with this plug-in feature."
-        out_str += ""
-        out_str += ""
+        out_str += "<br />"
+        out_str += "<hr />"
         return out_str
 
     def create_experiment_(self, experiment_name, uploadFlag: bool=False):
