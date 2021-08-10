@@ -164,10 +164,13 @@ class ElabFTWUIHandler:
             reject_colon(api)
             self.users.api_key = api
             self.users.create_user()
+            #TODO; There seems to be some bug here: After successful creation of a user, 
+            # the GUI does not switch to the experiments list.
+            # After a restart of Swift, the new user is shown and can log in, though.
             self.switch_to_experiments_list()
 
         def accepted_elabftw_user_id_dialog(user_id):
-            # DEBUG anchor; bug due to cipher? Invalid readout from users.txt
+            #TODO bug due to cipher? Invalid readout from users.txt
             #try:
             #    int(user_id)
             #except:
