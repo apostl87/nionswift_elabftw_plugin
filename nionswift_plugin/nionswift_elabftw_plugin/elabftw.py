@@ -42,10 +42,10 @@ hostname = socket.gethostname()
 ## get IP address using socket.gethostbyname
 ip_address = socket.gethostbyname(hostname)
 print(f"eLabFTW plug-in init: Your IPv4 is {ip_address}.")
-#if '131.130' in ip_address:
-#    pass
-#else:
-#    os.environ['HTTPS_PROXY'] = 'socks5://127.0.0.1:1234' # run your "pnmgate.sh -w" beforehand
+if '131.130' in ip_address:
+    pass
+else:
+    os.environ['HTTPS_PROXY'] = 'socks5://127.0.0.1:1234' # run your "pnmgate.sh -w" beforehand
 #### end
 
 class ElabFTWUIHandler:
