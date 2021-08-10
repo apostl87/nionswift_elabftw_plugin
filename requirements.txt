@@ -4,3 +4,4 @@ nionutils
 nionui
 nionswift
 elabapy
+pysocks
