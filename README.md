@@ -1,4 +1,4 @@
-# Nion Swift eLabftw Plug-in ##
+# Nion Swift eLabFTW Plug-in ##
 A simple plug-in to allow users to manage their eLabFTW experiments through Nion Swift.
 
 ## Installation ##
