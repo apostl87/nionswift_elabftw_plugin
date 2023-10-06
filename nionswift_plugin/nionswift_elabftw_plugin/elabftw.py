@@ -158,17 +158,17 @@ class ElabFTWUIHandler:
             reject_colon(api)
             self.users.api_key = api
             self.users.create_user()
-            #TODO; There seems to be some bug here: After successful creation of a user, 
+            ## TODO # There seems to be some bug here: After successful creation of a user, 
             # the GUI does not switch to the experiments list.
             # After a restart of Swift, the new user is shown and can log in, though.
             self.switch_to_experiments_list()
 
         def accepted_elabftw_user_id_dialog(user_id):
-            #TODO bug due to cipher? Invalid readout from users.txt
-            #try:
-            #    int(user_id)
-            #except:
-            #    raise Exception('Invalid format for Person id')
+            ## TODO # Bug due to cipher? Invalid readout from users.txt
+            # try:
+            #     int(user_id)
+            # except:
+            #     raise Exception('Invalid format for Person id')
             self.users.elabftw_user_id = user_id
             self.__api.application.document_windows[0].show_get_string_message_box('Create User', 'Enter API key', accepted_api_dialog, accepted_text='Set')
 
@@ -242,7 +242,7 @@ class ElabFTWUIHandler:
 
         if self.current_experiment_id == '-1':
             return
-        # sync the uploads with the chosen experiments
+        # Sync the uploads with the chosen experiments
         self.get_uploads_for_current_experiment()
 
     def get_uploads_for_current_experiment(self):
@@ -268,24 +268,28 @@ class ElabFTWUIHandler:
             print('Chosen asynchronous threading package not implemented.')
 
     def submit_data_button_clicked(self, widget: Declarative.UIWidget):
-        #check if one or more dataitem is selected. Otherwise raise an error.
+        # Check if one or more dataitem is selected. Otherwise raise an error.
         if len(self.__api.application.document_controllers[0]._document_controller.selected_data_items)<1:
             self.__api.application.document_windows[0].show_get_string_message_box('Error in Dataitem selection', 'Please select data item(s) to submit in the Data Panel.', lambda x: x)
             return
 
         if self.current_experiment_id == str(-1):
-            #--# deprecated (pnm)
-            #--# def accepted_exp_dialog(experiment_name):
-            #--#     self.create_experiment_(experiment_name, uploadFlag=True)
-            #--# self.__api.application.document_windows[0].show_get_string_message_box('Create Experiment', 'Enter a name for the Experiment', accepted_exp_dialog, accepted_text='Create')
+            ## PNM-BRANCH deprecated
+            # def accepted_exp_dialog(experiment_name):
+            #     self.create_experiment_(experiment_name, uploadFlag=True)
+            # self.__api.application.document_windows[0].show_get_string_message_box('Create Experiment', 'Enter a name for the Experiment', accepted_exp_dialog, accepted_text='Create')
+            ## PNM-BRANCH deprecated end
+
+            ## PNM-BRANCH start
             pass
+            ## PNM-BRANCH end
         else:
             self.upload_meta_data()
 
     def fetch_data_button_clicked(self, widget: Declarative.UIWidget):
         document_controller = self.__api.application.document_controllers[0]._document_controller
 
-        #check if one dataitem is selected. Otherwise give an error.
+        # Check if one dataitem is selected. Otherwise give an error.
         if len(document_controller.selected_data_items)!=1:
             self.__api.application.document_windows[0].show_get_string_message_box('Error in Dataitem selection', 'Please choose a single data item to fetch to.', lambda x: x)
             return
@@ -328,7 +332,7 @@ class ElabFTWUIHandler:
             params = {'tag': self.add_tag_text}
             # Clear line edit
             self.add_tag_text = None
-            #
+
             self.elab_manager.post_experiment(self.current_experiment_id, params)
             print(f'eLabFTW plug-in: Tag {params["tag"]} has been added.')
         self.asyncthread = AsyncRequestThread_threading.asyncrequest(task_add_tag)
@@ -341,7 +345,7 @@ class ElabFTWUIHandler:
             params = {'link': int(self.add_link_text)}
             # Clear line edit
             self.add_link_text = None
-            #
+            
             self.elab_manager.post_experiment(self.current_experiment_id, params)
             print(f'eLabFTW plug-in: Item {params["link"]} has been linked.')
         self.asyncthread = AsyncRequestThread_threading.asyncrequest(task_add_link)
@@ -372,7 +376,7 @@ class ElabFTWUIHandler:
             tmp = tools.edit_body_line(tmp, self.elab_manager)
             # Clear text edit
             self.append_line2body_text = ""
-            #
+            
             exp = self.elab_manager.get_experiment(self.current_experiment_id)
             exp['body'] += f"<p>"
             if self.append_line2body_timestamp_boolean == True:
@@ -384,11 +388,11 @@ class ElabFTWUIHandler:
         self.asyncthread = AsyncRequestThread_threading.asyncrequest(task_update_experiment_body)
 
     def append_line2body_return_pressed(self, widget: Declarative.UIWidget):
-        #DISABLED# modifiers = QtWidgets.QApplication.keyboardModifiers()
-        #DISABLED# if modifiers == QtCore.Qt.ShiftModifier: pass
-        #DISABLED# #elif modifiers == QtCore.Qt.ControlModifier: pass
-        #DISABLED# #elif modifiers == QtCore.Qt.AltModifier: pass
-        #DISABLED# else: self.append_line2body_button_clicked(widget)
+        ## PNM-BRANCH disabled # modifiers = QtWidgets.QApplication.keyboardModifiers()
+        ## PNM-BRANCH disabled # if modifiers == QtCore.Qt.ShiftModifier: pass
+        ## PNM-BRANCH disabled # elif modifiers == QtCore.Qt.ControlModifier: pass
+        ## PNM-BRANCH disabled # elif modifiers == QtCore.Qt.AltModifier: pass
+        ## PNM-BRANCH disabled # else: self.append_line2body_button_clicked(widget)
         self.append_line2body_button_clicked(widget)
 
     def on_set_status_combo_changed(self, widget: Declarative.UIWidget, current_index: int):
@@ -432,7 +436,7 @@ class ElabFTWUIHandler:
 
     def create_experiment_(self, experiment_name, uploadFlag: bool=False):
         if experiment_name in ["", " "] or "not create" in experiment_name:
-            return # this might need to be adapted und include some user feedback
+            return # This might need to be adapted und include some user feedback
 
         params = {'title': experiment_name,
                 'body': self.project_path_lines(),
@@ -444,18 +448,19 @@ class ElabFTWUIHandler:
                 exp = self.elab_manager.create_experiment()
                 print(f'eLabFTW plug-in: Experiment "{experiment_name}" created.')
                 
-                #--# This has been removed due to bugs in pnm version
-                #--# self.current_experiment_id = exp['id'] # set the id of the new experiment to upload to
+                ## PNM-BRANCH disabled # This has been removed due to bugs in pnm version
+                # self.current_experiment_id = exp['id'] # set the id of the new experiment to upload to
 
                 self.elab_manager.post_experiment(exp['id'], params)
-                if True: # pnm-specific: add links to (1) Nion UltraSTEM 100 ((id 17)) and (2) Person entry of current user
+                if True: ## PNM-BRANCH # Add links to (1) Nion UltraSTEM 100 ((id 17)) and (2) Person entry of current user
                     self.elab_manager.post_experiment(exp['id'], {'link': 17})
                     print(f'eLabFTW plug-in: Device "Nion UltraSTEM 100" has been linked.')
-                    # DEBUG anchor; bug due to cipher? Invalid readout from users.txt
-                    #self.elab_manager.post_experiment(exp['id'], {'link': self.users.elabftw_user_id})
-                    #print(f'eLabFTW plug-in: Your Person entry has been linked.')
-                #--# if uploadFlag:
-                #--#    self.upload_meta_data
+                    ## PNM-BRANCH # Debug anchor - bug due to cipher? Invalid readout from users.txt
+                    # self.elab_manager.post_experiment(exp['id'], {'link': self.users.elabftw_user_id})
+                    # print(f'eLabFTW plug-in: Your Person entry has been linked.')
+                ## PNM-BRANCH disabled
+                # if uploadFlag:
+                #     self.upload_meta_data
                 self.get_experiments_and_set()
 
             self.asyncthread = AsyncRequestThread_threading.asyncrequest(task_create_experiment_)
