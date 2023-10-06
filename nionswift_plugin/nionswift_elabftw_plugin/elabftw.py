@@ -9,7 +9,7 @@ import typing
 import time
 from datetime import datetime
 from urllib.parse import urlparse
-#DISABLED# from PyQt5 import QtCore, QtWidgets
+## PNM-BRANCH disabled # from PyQt5 import QtCore, QtWidgets
 
 import elabapy
 from nion.swift import DocumentController, Facade, Panel, Workspace
@@ -52,9 +52,9 @@ class ElabFTWUIHandler:
         self.last_modified_dataitem = None
         self.combo = None
         self.experiments_combo = None
-        # master or pnm-specific: use threading instead of qt
+        # PNM-BRANCH using threading instead of qt
         self.asyncthread_package = 'threading' # options: 'qt', 'threading'
-        # pnm functionality: properties for readable GUI elements
+        # PNM-BRANCH properties for readable GUI elements
         self.__add_tag_text = None
         self.__add_link_text = None
         self.__append_line2body_text = None
