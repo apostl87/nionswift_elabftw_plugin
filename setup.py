@@ -11,7 +11,7 @@ setup(
     long_description='',
 
     author='Sherjeel Shabih, Andreas Postl',
-    author_email='shabihsherjeel@gmail.com, dedicated.codes@gmail.com',
+    author_email='shabihsherjeel@gmail.com, andreas.postl42@gmail.com',
 
     license='GNU General Public License v3.0',
     #url='https://github.com/shabihsherjeel/nionswift_elabftw_plugin',
