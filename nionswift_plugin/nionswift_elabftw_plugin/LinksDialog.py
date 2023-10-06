@@ -32,7 +32,7 @@ class LinksDialogUIHandler:
         if callable(self.on_closed):
             self.on_closed()
         else:
-            ... #self.request_close()
+            ... # self.request_close()
 
     def on_add_links_clicked(self, widget: Declarative.UIWidget):
         if callable(self.on_add_links):
@@ -47,7 +47,7 @@ class LinksDialogUIHandler:
             self.request_close()
             
     def on_check_box_changed(self, widget: Declarative.UIWidget, checked: bool): # TBD
-        #print(dir(widget))
+        ## PNM-BRANCH # Debug anchor; print(dir(widget))
         item_id_str = widget.text[:widget.text.find(':')]
         self.check_box_states[item_id_str] = checked
 
@@ -63,7 +63,7 @@ class LinksDialogUI:
             def task_create_gui():
                 ui_view = self.__create_ui_view(ui, title=kwargs.get('title'))
                 return LinksDialogUIHandler(api, ui_view, document_controller=document_controller, elab_manager=elab_manager, experiment_id=experiment_id)
-            # task_create_gui can be called outside of UI thread
+            ## PNM-BRANCH # task_create_gui can be called outside of UI thread
             task_create_gui() # api.queue_task(task_create_gui)
         self.asyncthread = AsyncRequestThread_threading.asyncrequest(tasks_sequential_calling_uithread)
 
@@ -100,7 +100,7 @@ class LinksDialogUI:
         self.all_items = elab_manager.get_all_items() # API yields 16 items
         print(f'{len(self.all_items)} items fetched from eLabFTW API.') # temporary feedback line
 
-        ## TEMP workaround for the line above
+        ## PNM-BRANCH unfinished # Temporary workaround for the line above
         #self.all_items = []
         #for item_id in range(50):
         #    try: output = elab_manager.get_item(item_id)
@@ -109,7 +109,7 @@ class LinksDialogUI:
         #    print(item_id) # tmp
         #    if type(output) == dict:
         #        self.all_items.append(output)
-        ## TEMP end
+        ## PNM-BRANCH unfinished end
 
 
         
