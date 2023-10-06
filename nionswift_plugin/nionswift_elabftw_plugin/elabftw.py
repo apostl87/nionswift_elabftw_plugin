@@ -556,7 +556,7 @@ class ElabFTWUI:
         return ElabFTWUIHandler(api, event_loop, ui_view)
 
     def __create_ui_view(self, ui: Declarative.DeclarativeUI) -> dict:
-        # login UI
+        # Login UI
         create_user_button = ui.create_push_button(name='left_button', text='Create', on_clicked='create_user_button_clicked')
         login_user_button = ui.create_push_button(name='right_button', text='Login', on_clicked='login_user_button_clicked')
         buttons_row = ui.create_row(create_user_button, login_user_button, spacing=8, margin=4)
@@ -567,7 +567,7 @@ class ElabFTWUI:
 
         login_column = ui.create_column(users_row, buttons_row, ui.create_stretch(), spacing=8, margin=4)
 
-        # experiments rows
+        # Experiments rows
         experiments_combo = ui.create_combo_box(name='experiments_combo', on_current_index_changed='on_experiments_combo_changed')
         experiments_field_1 = ui.create_label(text='Experiment: ')
         experiments_row_1 = ui.create_row(experiments_field_1, experiments_combo)
@@ -582,7 +582,7 @@ class ElabFTWUI:
 
         experiments_column = ui.create_column(experiments_row_1, experiments_row_2, create_experiment_row, spacing=8, margin=4)
 
-        # manage metadata UI
+        # Manage metadata UI
         uploads_field = ui.create_label(text='Attached files: (This is a display of the list only) ')
         uploads_combo = ui.create_combo_box(name='uploads_combo', on_current_index_changed='on_uploads_combo_changed')
         uploads_row = ui.create_row(uploads_field, uploads_combo, spacing=8, margin=4)
@@ -596,11 +596,11 @@ class ElabFTWUI:
 
         data_buttons_column = ui.create_column(data_buttons_row_1, data_buttons_row_2, spacing=8, margin=4)
 
-        # logout UI
+        # Logout UI
         logout_user_button = ui.create_push_button(name='logout_button', text='Logout', on_clicked='logout_user_button_clicked')
         logout_user_row = ui.create_row(logout_user_button, ui.create_stretch(), spacing=8, margin=4)
 
-        # pnm functionality
+        ## PNM-BRANCH # New functionality
         add_tag_text_edit = ui.create_text_edit(
             name='add_tag_text_edit',
             text='@binding(add_tag_text)',
@@ -645,7 +645,7 @@ class ElabFTWUI:
 
         pnm_column = ui.create_column(add_tag_row, add_links_column, append_line2body_column, set_status_row, finalize_row, spacing=8, margin=4)
 
-        # create final appearance of GUI
+        # Create final appearance of GUI
         data_column = ui.create_column(experiments_column, uploads_row, data_buttons_column,
                                         pnm_column, logout_user_row, ui.create_stretch(),
                                         spacing=8, margin=4)
