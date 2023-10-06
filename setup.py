@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='nionswift_elabftw_plugin',
 
-    version='0.1.2.3.1_pnm_0.9.5',
+    version='0.1.2.3.1_pnm_0.9.9.9',
 
     description='A simple plug-in to allow users to manage \
                 their eLabFTW experiments through Nion Swift. \
