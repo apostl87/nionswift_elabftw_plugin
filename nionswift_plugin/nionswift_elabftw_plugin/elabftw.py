@@ -73,7 +73,7 @@ class ElabFTWUIHandler:
         self.users.username = self.combo.items[0]
         self.elab_manager = None
 
-        #Check if directory exists or not. Create if it doesn't exist.
+        # Check if directory exists or not. Create if it doesn't exist.
         from pathlib import Path
         Path(os.path.expanduser(self.users.settings_dir)).mkdir(parents=True, exist_ok=True)
 
@@ -86,7 +86,7 @@ class ElabFTWUIHandler:
                 f.write('elabftw_url='+url+'\n')
 
         def url_check(url):
-            #Checks and accounts for different formats the address could be given in
+            # Checks and accounts for different formats the address could be given in
             url_result = urlparse(url)
             if(url_result.netloc==''): #If no valid netloc found
                 #ask again
@@ -137,10 +137,10 @@ class ElabFTWUIHandler:
 
     def switch_to_experiments_list(self):
         self.elab_manager = elabapy.Manager(endpoint=self.config['elabftw_url']+"/api/v1/", token=self.users.api_key)
-        ## pnm-specific: Tests the API functionality
+        ## PNM-BRANCH disabled # Tests the API functionality
         #exp = self.elab_manager.get_experiment(42)
         #print(json.dumps(exp, indent=4, sort_keys=True))
-        ## end
+        ## PNM-BRANCH disabled end # end
         self.get_experiments_and_set()
 
     def logout_user_button_clicked(self, widget: Declarative.UIWidget):
