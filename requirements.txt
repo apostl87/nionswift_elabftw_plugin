@@ -3,6 +3,6 @@ cryptography
 nionutils
 nionui
 nionswift
-elabapy
+elabapy # https://github.com/elabftw/elabapy
 pysocks
 
